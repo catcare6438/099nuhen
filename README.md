@@ -1,6 +1,3 @@
-索引· HTML
-收到
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
