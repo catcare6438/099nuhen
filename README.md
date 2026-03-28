@@ -1,4 +1,6 @@
-(https://github.com/user-attachments/files/26324132/index.4.html)
+索引· HTML
+收到
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -27,7 +29,7 @@ body {
   color: var(--text);
   min-height: 100vh;
 }
-
+ 
 /* HERO */
 .hero {
   background: linear-gradient(135deg, #FFD6E0 0%, #FFECF0 40%, #FFF0F8 100%);
@@ -94,7 +96,7 @@ body {
   90%{opacity:0.12;}
   100%{transform:translateY(-100vh) rotate(360deg);opacity:0;}
 }
-
+ 
 /* NAV */
 nav {
   background: var(--white);
@@ -120,7 +122,7 @@ nav a {
   transition: all .2s;
 }
 nav a:hover { background: var(--pink); color: white; }
-
+ 
 /* SECTION */
 .section { max-width: 900px; margin: 30px auto; padding: 0 16px; }
 .card {
@@ -150,7 +152,7 @@ nav a:hover { background: var(--pink); color: white; }
   align-items: center;
   gap: 8px;
 }
-
+ 
 /* INPUTS */
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media(max-width:520px){ .contact-grid{ grid-template-columns:1fr; } }
@@ -170,7 +172,7 @@ nav a:hover { background: var(--pink); color: white; }
   resize: vertical;
 }
 .input-field input:focus, .input-field textarea:focus { border-color: var(--pink-deep); }
-
+ 
 /* DATE */
 .date-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .date-field { flex:1; min-width:140px; }
@@ -183,7 +185,7 @@ nav a:hover { background: var(--pink); color: white; }
 }
 .date-field input:focus { border-color: var(--pink-deep); }
 .date-info { margin-top:10px; font-size:0.88rem; color:var(--pink-deep); font-weight:600; }
-
+ 
 /* NUMBER */
 .number-field { display:flex; flex-direction:column; gap:5px; }
 .number-field label { font-size:0.82rem; color:var(--text-light); font-weight:500; }
@@ -197,7 +199,7 @@ nav a:hover { background: var(--pink); color: white; }
 }
 .num-btn:hover { background:var(--pink); color:white; }
 .num-val { font-size:1.1rem; font-weight:700; min-width:24px; text-align:center; }
-
+ 
 /* SERVICE */
 .service-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:12px; }
 .service-card {
@@ -215,7 +217,7 @@ nav a:hover { background: var(--pink); color: white; }
 .service-icon { font-size:1.8rem; margin-bottom:6px; }
 .service-name { font-size:0.82rem; font-weight:600; color:var(--text); }
 .service-price { font-size:0.78rem; color:var(--pink-deep); font-weight:700; margin-top:2px; }
-
+ 
 /* ADDON */
 .addon-list { display:flex; flex-wrap:wrap; gap:10px; }
 .addon-item {
@@ -229,7 +231,7 @@ nav a:hover { background: var(--pink); color: white; }
   background:var(--pink-light); border-color:var(--pink-deep);
   color:var(--pink-deep); font-weight:600;
 }
-
+ 
 /* DISTANCE */
 .dist-input {
   width:90px; padding:10px 12px;
@@ -245,7 +247,7 @@ nav a:hover { background: var(--pink); color: white; }
   font-weight:600; text-decoration:none; transition:all .2s;
 }
 .map-link:hover { background:var(--yellow); }
-
+ 
 /* SUMMARY */
 .summary-box {
   background:linear-gradient(135deg,#FFF0F3,#FFF9F0);
@@ -265,7 +267,7 @@ nav a:hover { background: var(--pink); color: white; }
   transition:all .2s; letter-spacing:2px; margin-top:20px;
 }
 .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,107,138,0.45); }
-
+ 
 /* TEAM */
 .team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
 .team-card {
@@ -279,7 +281,7 @@ nav a:hover { background: var(--pink); color: white; }
   border-radius:20px; font-size:0.7rem; padding:2px 10px; font-weight:600; margin-bottom:8px;
 }
 .team-desc { font-size:0.8rem; color:var(--text-light); line-height:1.6; }
-
+ 
 /* MODAL */
 .modal-overlay {
   display:none; position:fixed; inset:0;
@@ -320,7 +322,7 @@ nav a:hover { background: var(--pink); color: white; }
   display:block; width:100%; transition:all .2s;
 }
 .modal-close:hover { background:#FF6B8A; }
-
+ 
 /* FOOTER */
 footer {
   background:linear-gradient(135deg,#FFD6E0,#FFECF0);
@@ -331,7 +333,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
 </style>
 </head>
 <body>
-
+ 
 <!-- HERO -->
 <div class="hero">
   <div class="paw-bg" id="pawBg"></div>
@@ -345,7 +347,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
     </a>
   </div>
 </div>
-
+ 
 <!-- NAV -->
 <nav>
   <a onclick="goTo('booking')">📋 立即預約</a>
@@ -353,10 +355,10 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
   <a onclick="goTo('team')">👩‍⚕️ 認識保母</a>
   <a href="admin.html">🔐 後臺管理</a>
 </nav>
-
+ 
 <!-- BOOKING -->
 <div class="section" id="booking">
-
+ 
   <!-- 1. 飼主資料 -->
   <div class="card">
     <div class="card-title">📝 飼主資料</div>
@@ -391,7 +393,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
       </div>
     </div>
   </div>
-
+ 
   <!-- 2. 預約日期 -->
   <div class="card">
     <div class="card-title">📅 預約日期與次數</div>
@@ -417,7 +419,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
       </div>
     </div>
   </div>
-
+ 
   <!-- 3. 主要服務 -->
   <div class="card">
     <div class="card-title">🐾 選擇主要服務</div>
@@ -435,7 +437,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
     </div>
     <div style="font-size:0.8rem;color:var(--text-light);">※ 可同時選擇多項主要服務</div>
   </div>
-
+ 
   <!-- 4. 加購 -->
   <div class="card">
     <div class="card-title">✨ 加購服務（每次、每天計費）</div>
@@ -463,7 +465,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
       </div>
     </div>
   </div>
-
+ 
   <!-- 5. 車馬費 -->
   <div class="card">
     <div class="card-title">🚗 車馬費計算</div>
@@ -480,7 +482,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
       🐾 5km 以內免收車馬費 ｜ 超過 5km，每多 1km 加收 $50
     </div>
   </div>
-
+ 
   <!-- 6. 備注 -->
   <div class="card">
     <div class="card-title">💬 其他備注</div>
@@ -489,7 +491,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
       <textarea id="notes" rows="3" placeholder="其他特殊服務需求可於此詳述，我們將盡快與您確認..."></textarea>
     </div>
   </div>
-
+ 
   <!-- SUMMARY + SUBMIT -->
   <div class="card">
     <div class="card-title">🧾 費用試算</div>
@@ -498,9 +500,9 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
     </div>
     <button class="submit-btn" onclick="submitBooking()">🐾 送出預約申請 🐾</button>
   </div>
-
+ 
 </div>
-
+ 
 <!-- SERVICES -->
 <div class="section" id="services">
   <div class="card">
@@ -526,7 +528,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
     </div>
   </div>
 </div>
-
+ 
 <!-- TEAM -->
 <div class="section" id="team">
   <div class="card">
@@ -541,13 +543,13 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
     </div>
   </div>
 </div>
-
+ 
 <footer>
   <div class="footer-title">🐾 貓窩裏 到府寵物褓姆</div>
   <div>LINE 官方帳號：<strong>@099nuhen</strong></div>
   <div style="margin-top:6px;font-size:0.78rem;">© 2025 貓窩裏 · 讓每隻毛孩都被好好愛著 💕</div>
 </footer>
-
+ 
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -567,7 +569,7 @@ footer .footer-title { font-weight:700; font-size:1rem; color:var(--pink-deep); 
     <button class="modal-close" onclick="closeModal()">好的，我知道了 🌸</button>
   </div>
 </div>
-
+ 
 <script>
 // Smooth scroll with nav offset
 function goTo(id){
@@ -576,7 +578,7 @@ function goTo(id){
   const navH = document.querySelector('nav').offsetHeight;
   window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - navH - 12, behavior:'smooth' });
 }
-
+ 
 // Paw BG
 const pawBg = document.getElementById('pawBg');
 ['🐾','🐱','🐶','🌸','💕','⭐'].forEach(p=>{
@@ -587,7 +589,7 @@ const pawBg = document.getElementById('pawBg');
     pawBg.appendChild(s);
   }
 });
-
+ 
 // Service toggle
 function toggleService(el){
   const all=document.querySelectorAll('.service-card.selected');
@@ -595,7 +597,7 @@ function toggleService(el){
   el.classList.toggle('selected');
   calcTotal();
 }
-
+ 
 // Number controls
 const N={catCount:1,dogCount:0,timesPerDay:1};
 function changeNum(id,delta){
@@ -603,7 +605,7 @@ function changeNum(id,delta){
   document.getElementById(id).textContent=N[id];
   calcTotal();
 }
-
+ 
 // Days
 function calcDays(){
   const s=document.getElementById('startDate').value;
@@ -612,50 +614,50 @@ function calcDays(){
   const d=Math.floor((new Date(e)-new Date(s))/(864e5))+1;
   return d<0?0:d;
 }
-
+ 
 // Distance cost: 5km以內免費，超過5km每多1km加$50
 function distCost(km){
   km=parseFloat(km)||0;
   if(km<=5) return 0;
   return Math.ceil((km-5))*50;
 }
-
+ 
 // Calc
 function calcTotal(){
   const days=calcDays();
   const times=N.timesPerDay;
   const cats=N.catCount, dogs=N.dogCount;
   const km=parseFloat(document.getElementById('distance').value)||0;
-
+ 
   document.getElementById('dateInfo').textContent=days>0?`📅 共 ${days} 天`:'請選擇服務日期';
-
+ 
   const dc=distCost(km);
   const de=document.getElementById('distCost');
   if(!km) de.textContent='';
   else if(dc===0) de.textContent='🎉 5km 內免收車馬費';
   else de.textContent=`車馬費 $${dc}（超出 ${(km-5).toFixed(1)} km × $50）`;
-
+ 
   let base=0;
   const cards=document.querySelectorAll('.service-card.selected');
   cards.forEach(c=>base+=parseInt(c.dataset.base));
-
+ 
   let addon=0; const addonNames=[];
   document.querySelectorAll('#addonList input:checked').forEach(cb=>{
     addon+=parseInt(cb.value); addonNames.push(cb.dataset.name);
   });
-
+ 
   let extra=0;
   if(cats>2) extra+=(cats-2)*30;
   if(dogs>2) extra+=(dogs-2)*30;
-
+ 
   const perSession=base+addon+extra;
   const daily=perSession*times;
   const sub=daily*(days||0);
   const total=sub+dc;
-
+ 
   const svcNames=[];
   cards.forEach(c=>svcNames.push({companion:'到府陪伴',walk:'散步服務'}[c.dataset.service]||c.dataset.service));
-
+ 
   let html='';
   html+=row(`主要服務（${svcNames.join('+')}）/次`,`$${base}`);
   if(addon>0) html+=row(`加購（${addonNames.join('、')}）/次`,`$${addon}`);
@@ -667,11 +669,11 @@ function calcTotal(){
   html+=`<div class="summary-row total"><span>💕 預估總費用</span><span>${days>0?'$'+total:'-'}</span></div>`;
   document.getElementById('summaryBox').innerHTML=html;
 }
-
+ 
 function row(l,v,s=''){
   return `<div class="summary-row" style="${s}"><span>${l}</span><span>${v}</span></div>`;
 }
-
+ 
 // Submit
 function submitBooking(){
   const name=document.getElementById('ownerName').value.trim();
@@ -681,7 +683,7 @@ function submitBooking(){
   if(!name||!phone||!addr){ alert('請填寫飼主姓名、聯絡電話與服務地址 🐾'); return; }
   if(!petName){ alert('請填寫寵物名字 🐱'); return; }
   if(!calcDays()){ alert('請選擇預約日期 📅'); return; }
-
+ 
   const km=parseFloat(document.getElementById('distance').value)||0;
   const dc=distCost(km);
   const cards=document.querySelectorAll('.service-card.selected');
@@ -695,7 +697,7 @@ function submitBooking(){
   const days=calcDays();
   const sub=(base+addon+extra)*N.timesPerDay*days;
   const total=sub+dc;
-
+ 
   const b={
     id:Date.now(), timestamp:new Date().toISOString(),
     ownerName:name, ownerPhone:phone,
@@ -712,18 +714,19 @@ function submitBooking(){
     distance:km, transport:dc, total,
     status:'待確認', assignedTo:''
   };
-
+ 
   const list=JSON.parse(localStorage.getItem('petBookings')||'[]');
   list.push(b);
   localStorage.setItem('petBookings',JSON.stringify(list));
   document.getElementById('modalOverlay').classList.add('show');
 }
-
+ 
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('show');
 }
-
+ 
 calcTotal();
 </script>
 </body>
 </html>
+ 
