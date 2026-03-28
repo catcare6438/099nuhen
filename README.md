@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>毛孩守護者貓窩裏｜到府寵物保姆預約</title>
+<title>毛孩守護者｜到府寵物保姆預約</title>
+<style>
 :root{
   --p1:#FFB7C5;--p2:#FF8FAB;--p3:#E05070;
   --y1:#FFE0A3;--y2:#FFD07A;
