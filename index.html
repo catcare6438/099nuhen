@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>貓窩裏 · 到府寵物保母行事曆</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f9f9f7;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.12);
+    --border-md: rgba(0,0,0,0.22);
+    --text: #1a1a18;
+    --text-2: #5f5e5a;
+    --text-3: #888780;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --teal-mid: #9FE1CB;
+    --amber-mid: #FAC775;
+    --amber-dark: #633806;
+    --blue-light: #B5D4F4;
+    --blue-dark: #0C447C;
+    --pink-light: #F4C0D1;
+    --pink-dark: #72243E;
+    --gray-light: #D3D1C7;
+    --gray-dark: #444441;
+    --red-light: #FCEBEB;
+    --red-dark: #A32D2D;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --surface: #252523;
+      --border: rgba(255,255,255,0.1);
+      --border-md: rgba(255,255,255,0.2);
+      --text: #f0efea;
+      --text-2: #b4b2a9;
+      --text-3: #888780;
+      --green-light: #04342C;
+      --green-dark: #9FE1CB;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+  }
+
+  .app { max-width: 960px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .header-title {
+    font-size: 20px; font-weight: 500; display: flex; align-items: center; gap: 8px;
+  }
+  .header-title i { color: var(--green); font-size: 22px; }
+  .header-sub { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 0.5px solid var(--border-md);
+    background: var(--surface); border-radius: var(--radius-md);
+    padding: 7px 14px; cursor: pointer; font-size: 13px; color: var(--text);
+    transition: background 0.15s; font-family: inherit;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn-primary {
+    background: var(--green); color: #fff; border-color: var(--green);
+  }
+  .btn-primary:hover { background: #0F6E56; border-color: #0F6E56; }
+  .btn-danger { color: var(--red-dark); }
+  .btn-danger:hover { background: var(--red-light); }
+
+  /* Nav row */
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .month-label { font-size: 15px; font-weight: 500; min-width: 120px; text-align: center; }
+
+  /* Calendar */
+  .weekday-row, .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+  }
+  .weekday-row { margin-bottom: 3px; }
+  .weekday-cell {
+    text-align: center; font-size: 11px; font-weight: 500;
+    color: var(--text-3); padding: 4px 0;
+  }
+  .day-cell {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 5px; min-height: 96px;
+    cursor: pointer; transition: border-color 0.15s;
+  }
+  .day-cell:hover { border-color: var(--border-md); }
+  .day-cell.other-month { background: var(--bg); opacity: 0.5; cursor: default; }
+  .day-cell.today .day-num {
+    background: var(--green); color: #fff;
+    border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .day-num {
+    font-size: 12px; font-weight: 500;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 3px;
+  }
+  .day-cell.other-month .day-num { color: var(--text-3); }
+
+  .appt-tag {
+    font-size: 10px; padding: 2px 5px; border-radius: 4px;
+    margin-bottom: 2px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    background: var(--teal-mid); color: var(--green-dark);
+  }
+  .appt-tag.walk { background: var(--blue-light); color: var(--blue-dark); }
+  .appt-tag.visit { background: var(--amber-mid); color: var(--amber-dark); }
+  .appt-tag.bath { background: var(--pink-light); color: var(--pink-dark); }
+  .appt-tag.other { background: var(--gray-light); color: var(--gray-dark); }
+  .more-tag { font-size: 10px; color: var(--text-3); padding: 1px 4px; }
+
+  /* Overlay & Modal */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.38); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border-md);
+    padding: 1.25rem; width: 460px; max-width: 95vw;
+    max-height: 88vh; overflow-y: auto;
+    position: relative;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .modal-title { font-size: 16px; font-weight: 500; }
+  .close-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-2); font-size: 20px; line-height: 1;
+    border-radius: 4px; padding: 2px 5px; font-family: inherit;
+  }
+  .close-btn:hover { background: var(--bg); }
+
+  /* Appointment row in day modal */
+  .appt-row {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px; margin-bottom: 8px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .appt-info { flex: 1; }
+  .appt-time { font-size: 11px; color: var(--text-2); margin-bottom: 3px; }
+  .appt-name-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 500; color: #185FA5;
+    padding: 0; text-decoration: underline; text-underline-offset: 2px;
+    font-family: inherit;
+  }
+  .appt-name-btn:hover { color: var(--blue-dark); }
+  .appt-pet { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+  .type-pill {
+    display: inline-block; font-size: 11px; padding: 2px 7px;
+    border-radius: 10px; font-weight: 500;
+  }
+  .type-顧貓 { background: var(--teal-mid); color: var(--green-dark); }
+  .type-遛狗 { background: var(--blue-light); color: var(--blue-dark); }
+  .type-家訪 { background: var(--amber-mid); color: var(--amber-dark); }
+  .type-洗澡 { background: var(--pink-light); color: var(--pink-dark); }
+  .type-其他 { background: var(--gray-light); color: var(--gray-dark); }
+
+  .action-col { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Client modal */
+  .client-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; background: var(--green-light); color: var(--green-dark);
+    border-radius: var(--radius-md); padding: 3px 9px; margin-bottom: 8px;
+  }
+  .alert-box {
+    border-left: 3px solid #EF9F27;
+    background: #FAEEDA; color: var(--amber-dark);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 8px 12px; font-size: 13px; line-height: 1.6; margin-bottom: 10px;
+  }
+  .note-box {
+    background: var(--bg); border-radius: var(--radius-md);
+    padding: 8px 12px; font-size: 13px; color: var(--text-2); line-height: 1.6;
+  }
+  .section-label {
+    font-size: 11px; font-weight: 500; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-size: 12px; color: var(--text-2); margin-bottom: 4px; display: block; }
+  .form-input {
+    width: 100%;
+    border: 0.5px solid var(--border-md);
+    border-radius: var(--radius-md);
+    padding: 7px 10px; font-size: 13px;
+    color: var(--text); background: var(--surface);
+    font-family: inherit; transition: border-color 0.15s;
+  }
+  .form-input:focus { outline: none; border-color: var(--green); }
+  textarea.form-input { resize: vertical; min-height: 72px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .empty-msg {
+    text-align: center; color: var(--text-3);
+    font-size: 13px; padding: 2rem 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .day-cell { min-height: 70px; padding: 3px; }
+    .appt-tag { display: none; }
+    .day-num { font-size: 11px; }
+    .modal { width: 98vw; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="header-title">
+        <i class="ti ti-paw"></i> 貓窩裏 · 到府保母行事曆
+      </div>
+      <div class="header-sub">管理您的每日寵物服務行程</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">
+      <i class="ti ti-plus"></i> 新增行程
+    </button>
+  </div>
+
+  <div class="nav-row">
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="btn" onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
+      <span class="month-label" id="monthLabel"></span>
+      <button class="btn" onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+    <button class="btn" onclick="goToday()">今天</button>
+  </div>
+
+  <div class="weekday-row">
+    <div class="weekday-cell">日</div><div class="weekday-cell">一</div>
+    <div class="weekday-cell">二</div><div class="weekday-cell">三</div>
+    <div class="weekday-cell">四</div><div class="weekday-cell">五</div>
+    <div class="weekday-cell">六</div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+
+<!-- Day Detail Modal -->
+<div class="overlay" id="dayOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="dayModalTitle"></span>
+      <button class="close-btn" onclick="closeOverlay('dayOverlay')"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="dayApptList"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px"
+      onclick="closeOverlay('dayOverlay');openAddModal()">
+      <i class="ti ti-plus"></i> 新增行程
+    </button>
+  </div>
+</div>
+
+<!-- Client Detail Modal -->
+<div class="overlay" id="clientOverlay">
+  <div class="modal" style="width:400px">
+    <div class="modal-header">
+      <span class="modal-title" id="clientModalTitle"></span>
+      <button class="close-btn" onclick="closeOverlay('clientOverlay')"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="clientModalContent"></div>
+  </div>
+</div>
+
+<!-- Add / Edit Form Modal -->
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="formTitle">新增行程</span>
+      <button class="close-btn" onclick="closeOverlay('formOverlay')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">日期</label>
+      <input type="date" class="form-input" id="fDate">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">開始時間</label>
+        <input type="time" class="form-input" id="fTime">
+      </div>
+      <div class="form-group">
+        <label class="form-label">服務類型</label>
+        <select class="form-input" id="fType">
+          <option>顧貓</option><option>遛狗</option>
+          <option>家訪</option><option>洗澡</option><option>其他</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">客戶姓名</label>
+      <input type="text" class="form-input" id="fName" placeholder="例：王小姐">
+    </div>
+    <div class="form-group">
+      <label class="form-label">服務地址</label>
+      <input type="text" class="form-input" id="fAddr" placeholder="高雄市○○區○○路○號">
+    </div>
+    <div class="form-group">
+      <label class="form-label">寵物名稱／種類</label>
+      <input type="text" class="form-input" id="fPet" placeholder="例：橘子（橘貓）">
+    </div>
+    <div class="form-group">
+      <label class="form-label">⚠ 須注意事項</label>
+      <textarea class="form-input" id="fAlert" placeholder="例：需每天吃藥一顆、怕陌生人…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">備註</label>
+      <textarea class="form-input" id="fNote" placeholder="其他補充說明…"></textarea>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveAppt()">
+      <i class="ti ti-check"></i> 儲存行程
+    </button>
+  </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentYear, currentMonth, editId = null;
+const today = new Date();
+
+const TYPE_CLASS = { 顧貓:'', 遛狗:'walk', 家訪:'visit', 洗澡:'bath', 其他:'other' };
+const MONTHS = ['一月','二月','三月','四月','五月','六月',
+                '七月','八月','九月','十月','十一月','十二月'];
+
+/*
+  NOTE: In a production app connected to a database, replace this array
+  with API calls (fetch/axios) hitting your backend REST endpoints.
+  See the companion SQL schema file for the database structure.
+*/
+let appts = [
+  { id:1, date:'2026-05-23', time:'09:00', type:'家訪', name:'王小姐',
+    addr:'鼓山區某路1號', pet:'小白（波斯貓）',
+    alert:'怕噪音，進門請輕聲', note:'鑰匙在信箱' },
+  { id:2, date:'2026-05-23', time:'11:00', type:'顧貓', name:'李先生',
+    addr:'左營區某街22號', pet:'咖啡（美國短毛貓）',
+    alert:'需每天吃腎臟病藥一顆', note:'飼料在廚房上方' },
+  { id:3, date:'2026-05-23', time:'14:00', type:'遛狗', name:'黃小姐',
+    addr:'三民區某路8號', pet:'花生（柴犬）',
+    alert:'見到其他狗會衝，請抓緊牽繩', note:'散步約30分鐘' },
+  { id:4, date:'2026-05-26', time:'10:00', type:'顧貓', name:'陳太太',
+    addr:'新興區某路5號', pet:'豆腐（布偶貓）',
+    alert:'剛結紮，傷口需觀察', note:'' },
+  { id:5, date:'2026-05-28', time:'09:30', type:'洗澡', name:'林小姐',
+    addr:'苓雅區某路3號', pet:'芒果（金毛獵犬）',
+    alert:'怕吹風機聲音', note:'只用指定沐浴乳' },
+];
+let nextId = 6;
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+const pad = n => String(n).padStart(2, '0');
+const dateStr = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+
+// ─── Calendar Render ──────────────────────────────────────────────────────────
+function init() {
+  currentYear  = today.getFullYear();
+  currentMonth = today.getMonth() + 1;
+  render();
+}
+
+function render() {
+  document.getElementById('monthLabel').textContent =
+    `${currentYear}年 ${MONTHS[currentMonth - 1]}`;
+
+  const grid  = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const firstDow = new Date(currentYear, currentMonth - 1, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+  const prevDays = new Date(currentYear, currentMonth - 1, 0).getDate();
+
+  const cells = [];
+  for (let i = 0; i < firstDow; i++)
+    cells.push({ d: prevDays - firstDow + 1 + i, cur: false });
+  for (let d = 1; d <= daysInMonth; d++)
+    cells.push({ d, cur: true });
+  const rem = (7 - cells.length % 7) % 7;
+  for (let i = 1; i <= rem; i++)
+    cells.push({ d: i, cur: false });
+
+  cells.forEach(c => {
+    const ds = c.cur ? dateStr(currentYear, currentMonth, c.d) : '';
+    const dayAppts = c.cur
+      ? appts.filter(a => a.date === ds).sort((a, b) => a.time.localeCompare(b.time))
+      : [];
+    const isToday = c.cur
+      && currentYear  === today.getFullYear()
+      && currentMonth === today.getMonth() + 1
+      && c.d === today.getDate();
+
+    const el = document.createElement('div');
+    el.className = 'day-cell' + (c.cur ? '' : ' other-month') + (isToday ? ' today' : '');
+    if (c.cur) el.onclick = () => openDayModal(ds, c.d);
+
+    const numDiv = document.createElement('div');
+    numDiv.className = 'day-num';
+    numDiv.textContent = c.d;
+    el.appendChild(numDiv);
+
+    dayAppts.slice(0, 3).forEach(a => {
+      const tag = document.createElement('div');
+      tag.className = 'appt-tag ' + (TYPE_CLASS[a.type] || '');
+      tag.textContent = `${a.time} ${a.name}-${a.type}`;
+      el.appendChild(tag);
+    });
+    if (dayAppts.length > 3) {
+      const more = document.createElement('div');
+      more.className = 'more-tag';
+      more.textContent = `+${dayAppts.length - 3} 更多`;
+      el.appendChild(more);
+    }
+    grid.appendChild(el);
+  });
+}
+
+function changeMonth(d) {
+  currentMonth += d;
+  if (currentMonth > 12) { currentMonth = 1; currentYear++; }
+  if (currentMonth < 1)  { currentMonth = 12; currentYear--; }
+  render();
+}
+function goToday() {
+  currentYear  = today.getFullYear();
+  currentMonth = today.getMonth() + 1;
+  render();
+}
+
+// ─── Day Modal ────────────────────────────────────────────────────────────────
+function openDayModal(ds, d) {
+  document.getElementById('dayModalTitle').textContent =
+    `${currentYear}年${MONTHS[currentMonth-1]}${d}日 行程`;
+
+  const list = document.getElementById('dayApptList');
+  const dayAppts = appts.filter(a => a.date === ds)
+                        .sort((a, b) => a.time.localeCompare(b.time));
+
+  if (!dayAppts.length) {
+    list.innerHTML = '<div class="empty-msg"><i class="ti ti-calendar-off" style="font-size:28px;display:block;margin-bottom:6px"></i>今天尚無行程</div>';
+    openOverlay('dayOverlay'); return;
+  }
+
+  list.innerHTML = dayAppts.map(a => `
+    <div class="appt-row">
+      <div class="appt-info">
+        <div class="appt-time">
+          <i class="ti ti-clock" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>${a.time}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+          <button class="appt-name-btn" onclick="openClientModal(${a.id})">${a.name}</button>
+          <span class="type-pill type-${a.type}">${a.type}</span>
+        </div>
+        ${a.pet ? `<div class="appt-pet"><i class="ti ti-paw" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>${a.pet}</div>` : ''}
+      </div>
+      <div class="action-col">
+        <button class="btn" style="font-size:12px;padding:4px 8px"
+          onclick="closeOverlay('dayOverlay');openEditModal(${a.id})">
+          <i class="ti ti-edit"></i> 編輯
+        </button>
+        <button class="btn btn-danger" style="font-size:12px;padding:4px 8px"
+          onclick="deleteAppt(${a.id})">
+          <i class="ti ti-trash"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  openOverlay('dayOverlay');
+}
+
+// ─── Client Modal ─────────────────────────────────────────────────────────────
+function openClientModal(id) {
+  const a = appts.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('clientModalTitle').textContent = `${a.name} · 客戶資料`;
+  document.getElementById('clientModalContent').innerHTML = `
+    <div class="client-badge"><i class="ti ti-paw"></i>${a.pet || '未填寫'}</div>
+    ${a.addr ? `<div style="font-size:13px;color:var(--text-2);margin-bottom:10px">
+      <i class="ti ti-map-pin" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>${a.addr}
+    </div>` : ''}
+    ${a.alert ? `<div class="section-label" style="margin-top:8px">⚠ 須注意事項</div>
+      <div class="alert-box">${a.alert}</div>` : ''}
+    ${a.note ? `<div class="section-label">備註</div>
+      <div class="note-box">${a.note}</div>` : ''}
+    ${!a.alert && !a.note ? '<div class="empty-msg">尚無備註資料</div>' : ''}
+    <button class="btn" style="margin-top:12px;width:100%;justify-content:center"
+      onclick="closeOverlay('clientOverlay');openEditModal(${a.id})">
+      <i class="ti ti-edit"></i> 編輯此行程
+    </button>
+  `;
+  openOverlay('clientOverlay');
+}
+
+// ─── Form Modal ───────────────────────────────────────────────────────────────
+function openAddModal() {
+  editId = null;
+  document.getElementById('formTitle').textContent = '新增行程';
+  document.getElementById('fDate').value =
+    dateStr(today.getFullYear(), today.getMonth() + 1, today.getDate());
+  document.getElementById('fTime').value  = '09:00';
+  document.getElementById('fType').value  = '顧貓';
+  ['fName','fAddr','fPet','fAlert','fNote'].forEach(id => document.getElementById(id).value = '');
+  openOverlay('formOverlay');
+}
+
+function openEditModal(id) {
+  editId = id;
+  const a = appts.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('formTitle').textContent = '編輯行程';
+  document.getElementById('fDate').value  = a.date;
+  document.getElementById('fTime').value  = a.time;
+  document.getElementById('fType').value  = a.type;
+  document.getElementById('fName').value  = a.name;
+  document.getElementById('fAddr').value  = a.addr  || '';
+  document.getElementById('fPet').value   = a.pet   || '';
+  document.getElementById('fAlert').value = a.alert || '';
+  document.getElementById('fNote').value  = a.note  || '';
+  openOverlay('formOverlay');
+}
+
+function saveAppt() {
+  const date = document.getElementById('fDate').value;
+  const time = document.getElementById('fTime').value;
+  const name = document.getElementById('fName').value.trim();
+  if (!date || !time || !name) { alert('請填寫日期、時間和客戶姓名'); return; }
+
+  const appt = {
+    id:    editId || nextId++,
+    date, time,
+    type:  document.getElementById('fType').value,
+    name,
+    addr:  document.getElementById('fAddr').value.trim(),
+    pet:   document.getElementById('fPet').value.trim(),
+    alert: document.getElementById('fAlert').value.trim(),
+    note:  document.getElementById('fNote').value.trim(),
+  };
+
+  if (editId) {
+    const idx = appts.findIndex(a => a.id === editId);
+    if (idx > -1) appts[idx] = appt;
+  } else {
+    appts.push(appt);
+  }
+
+  closeOverlay('formOverlay');
+  const [y, m] = date.split('-');
+  currentYear  = parseInt(y);
+  currentMonth = parseInt(m);
+  render();
+}
+
+function deleteAppt(id) {
+  if (!confirm('確定要刪除這個行程嗎？')) return;
+  appts = appts.filter(a => a.id !== id);
+  closeOverlay('dayOverlay');
+  render();
+}
+
+// ─── Overlay helpers ──────────────────────────────────────────────────────────
+function openOverlay(id)  { document.getElementById(id).classList.add('open'); }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
