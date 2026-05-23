@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>窩貓裏 ─ 5人保母聯合排班與家庭備註系統</title>
+    <!-- 引入 Tailwind CSS 方便美化介面 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background-color: #fffbf7; }
+        .time-slot { height: 60px; border-bottom: 1px solid #fed7aa; position: relative; }
+        .event-card { position: absolute; left: 10px; right: 10px; border-radius: 12px; padding: 8px 14px; color: white; font-size: 0.85rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.2s; }
+        .event-card:hover { transform: translateY(-2px); filter: brightness(95%); box-shadow: 0 6px 8px -1px rgba(0,0,0,0.15); }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden p-6 border border-orange-100">
+        <!-- 標頭 -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-orange-100 pb-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-orange-800 flex items-center gap-2">🐱 窩貓裏 ─ 每日到府保母時間軸</h1>
+                <p class="text-sm text-amber-600 mt-1">精準掌握 5 位夥伴時間銜接 🐾 守護貓咪的深刻備註</p>
+            </div>
+            <!-- 日期選擇 -->
+            <div class="mt-4 md:mt-0 flex items-center gap-2">
+                <span class="text-sm font-medium text-amber-700">選擇查看日期：</span>
+                <input type="date" id="datePicker" class="border border-orange-200 rounded-xl px-3 py-1.5 text-sm text-amber-900 font-semibold bg-orange-50/50 focus:outline-none focus:ring-2 focus:ring-orange-400" value="2026-05-24">
+            </div>
+        </div>
+
+        <!-- 保母篩選與顏色圖例 -->
+        <div class="bg-orange-50/60 border border-orange-100 rounded-xl p-4 mb-6">
+            <span class="text-xs font-bold text-orange-400 block mb-2 tracking-wider">保母團隊切換（點選可過濾班表）</span>
+            <div class="flex flex-wrap gap-3" id="nannyFilters">
+                <button onclick="filterNanny('all')" class="px-4 py-2 rounded-full text-xs font-bold bg-amber-800 text-white shadow-sm cursor-pointer transition-all">🐱 全部顯示</button>
+                <button onclick="filterNanny('guoguo')" class="px-4 py-2 rounded-full text-xs font-bold bg-orange-500 text-white shadow-sm cursor-pointer transition-all">🔸 我 (菓菓)</button>
+                <button onclick="filterNanny('xiaoru')" class="px-4 py-2 rounded-full text-xs font-bold bg-sky-500 text-white shadow-sm cursor-pointer transition-all">🔹 小茹</button>
+                <button onclick="filterNanny('aying')" class="px-4 py-2 rounded-full text-xs font-bold bg-purple-500 text-white shadow-sm cursor-pointer transition-all">🔮 阿瑛</button>
+                <button onclick="filterNanny('xiaoyu')" class="px-4 py-2 rounded-full text-xs font-bold bg-amber-500 text-white shadow-sm cursor-pointer transition-all">🌟 小語</button>
+                <button onclick="filterNanny('xiaowen')" class="px-4 py-2 rounded-full text-xs font-bold bg-rose-400 text-white shadow-sm cursor-pointer transition-all">🌸 小汶</button>
+            </div>
+        </div>
+
+        <!-- 時間軸主區塊 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            
+            <!-- 左側：視覺化時間軸 -->
+            <div class="md:col-span-7 border border-orange-100 rounded-2xl p-4 bg-orange-50/10 max-h-[700px] overflow-y-auto">
+                <div class="text-sm font-bold text-amber-900 mb-4 flex justify-between items-center">
+                    <span>⏰ 當日時間銜接表</span>
+                    <span class="text-xs text-rose-500 font-normal bg-rose-50 px-2 py-0.5 rounded-full">💡 點擊卡片看深刻備註</span>
+                </div>
+                
+                <div class="relative pl-16" id="timelineContainer" style="height: 960px;">
+                    <!-- 刻度線由 JS 動態生成 -->
+                </div>
+            </div>
+
+            <!-- 右側：詳細備註檢視 -->
+            <div class="md:col-span-5 flex flex-col gap-6">
+                <!-- 點擊後顯示的深刻備註卡片 -->
+                <div id="detailCard" class="border border-orange-200 bg-orange-50/30 rounded-2xl p-5 hidden transition-all">
+                    <div class="flex justify-between items-start mb-3">
+                        <span id="detailNanny" class="text-xs font-bold px-3 py-1 rounded-full text-white">保母</span>
+                        <span id="detailTime" class="text-xs font-bold text-amber-700 bg-orange-100/60 px-2 py-1 rounded-md">時間</span>
+                    </div>
+                    <h3 id="detailTitle" class="text-lg font-bold text-slate-800 mb-1">毛孩家庭</h3>
+                    <p id="detailArea" class="text-xs text-slate-500 mb-4">📍 服務區域</p>
+                    
+                    <div class="bg-white rounded-xl p-4 border border-orange-100 shadow-sm">
+                        <h4 class="text-xs font-bold text-rose-500 mb-3 flex items-center gap-1">⚠️ 窩貓裏核心注意事項（務必牢記）</h4>
+                        <ul id="detailNotes" class="text-sm text-slate-700 space-y-2.5 list-disc pl-4 leading-relaxed">
+                            <!-- 動態插入備註 -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="placeholderCard" class="border border-dashed border-orange-200 rounded-2xl p-8 text-center text-amber-600/60 flex flex-col items-center justify-center h-48 bg-orange-50/10">
+                    <span class="text-3xl mb-2">🐈</span>
+                    <p class="text-sm font-medium">點擊左側任何一個案件時間區塊<br>即可在此查看該家庭的「深刻備註」與禁忌</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 窩貓裏排班與家庭備註資料庫 (包含測試資料，未來可貼給 Claude 批次更新)
+        const eventsData = [
+            {
+                id: 1,
+                date: "2026-05-24",
+                startHour: 9, startMin: 0,
+                endHour: 10, endMin: 30,
+                title: "Ruby / 貓咪到府照顧",
+                area: "鼓山區",
+                nanny: "guoguo",
+                nannyName: "我 (菓菓)",
+                colorClass: "bg-orange-500",
+                notes: [
+                    "大門密碼：1472#，進出門請務必小心「貓咪衝刺逃跑」。",
+                    "客廳的自動掃地機器人「一定要關閉」，Ruby 會被嚇到躲起來。",
+                    "需要幫忙打皮下輸液 100ml，針頭請丟入專用回收罐。",
+                    "罐頭要拌 20cc 溫水，並觀察是否有排便。"
+                ]
+            },
+            {
+                id: 2,
+                date: "2026-05-24",
+                startHour: 11, startMin: 0,
+                endHour: 12, endMin: 15,
+                title: "Mumu / 貓咪陪伴",
+                area: "左營區",
+                nanny: "xiaoru",
+                nannyName: "小茹",
+                colorClass: "bg-sky-500",
+                notes: [
+                    "鑰匙在郵箱內。進屋後如果找不到貓，請看沙發底下或衣櫃上方，確認眼神平安即可，不用強行抱牠。",
+                    "極度護食！餵食罐頭時請放下就退後保持距離，不要伸手去拿牠身邊的東西。",
+                    "廚房流理台上的廚餘「一定要蓋好」，Mumu 會去翻。"
+                ]
+            },
+            {
+                id: 3,
+                date: "2026-05-24",
+                startHour: 13, startMin: 30,
+                endHour: 15, endMin: 0,
+                title: "球球 / 老貓照顧",
+                area: "三民區",
+                nanny: "aying",
+                nannyName: "阿瑛",
+                colorClass: "bg-purple-500",
+                notes: [
+                    "球球是一隻年邁的老貓，走路比較慢，餵食時請把碗墊高。",
+                    "注意排尿狀況，如果砂盆裡沒有網球大的尿塊，請回報給菓菓。",
+                    "後陽台的紗窗門記得檢查有沒有鎖好。"
+                ]
+            },
+            {
+                id: 4,
+                date: "2026-05-24",
+                startHour: 15, startMin: 45,
+                endHour: 17, endMin: 15,
+                title: "咪咪 / 到府餵食",
+                area: "左營區",
+                nanny: "xiaoyu",
+                nannyName: "小語",
+                colorClass: "bg-amber-500",
+                notes: [
+                    "進門需要餵食心絲蟲藥物（肉塊狀，直接餵食即可）。",
+                    "咪咪有異位性皮膚炎，嚴禁餵食任何家長提供之外的零食。",
+                    "離開前請確認客廳除濕機有打開（設定 55%）。"
+                ]
+            },
+            {
+                id: 5,
+                date: "2026-05-24",
+                startHour: 18, startMin: 0,
+                endHour: 19, startMin: 30,
+                title: "花生 / 幼貓陪伴",
+                area: "新興區",
+                nanny: "xiaowen",
+                nannyName: "小汶",
+                colorClass: "bg-rose-400",
+                notes: [
+                    "精力過度旺盛！請用逗貓棒陪玩至少 20 分鐘消耗體力。",
+                    "翻箱倒櫃能力很強，離開前請檢查客廳電線有沒有被啃咬。",
+                    "垃圾要順便帶下樓丟（管理室一樓有集中場）。"
+                ]
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        function initTimeline() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = ''; 
+
+            for (let h = 8; h <= 23; h++) {
+                const topPos = (h - 8) * 60;
+                
+                const timeLabel = document.createElement('div');
+                timeLabel.className = 'absolute left-0 text-xs font-bold text-amber-700/50 -mt-2 w-12 text-right';
+                timeLabel.innerText = `${String(h).padStart(2, '0')}:00`;
+                timeLabel.style.top = `${topPos}px`;
+                container.appendChild(timeLabel);
+
+                const line = document.createElement('div');
+                line.className = 'absolute right-0 border-t border-orange-100';
+                line.style.left = '60px';
+                line.style.top = `${topPos}px`;
+                container.appendChild(line);
+            }
+
+            const selectedDate = document.getElementById('datePicker').value;
+            const filteredEvents = eventsData.filter(ev => {
+                const matchDate = ev.date === selectedDate;
+                const matchNanny = currentFilter === 'all' || ev.nanny === currentFilter;
+                return matchDate && matchNanny;
+            });
+
+            filteredEvents.forEach(ev => {
+                const startTotalMin = (ev.startHour - 8) * 60 + ev.startMin;
+                const durationMin = (ev.endHour * 60 + ev.endMin) - (ev.startHour * 60 + ev.startMin);
+                
+                const card = document.createElement('div');
+                card.className = `event-card ${ev.colorClass}`;
+                card.style.top = `${startTotalMin}px`;
+                card.style.height = `${durationMin}px`;
+                
+                card.innerHTML = `
+                    <div class="font-bold flex justify-between items-center">
+                        <span>${String(ev.startHour).padStart(2, '0')}:${String(ev.startMin).padStart(2, '0')} - ${String(ev.endHour).padStart(2, '0')}:${String(ev.endMin).padStart(2, '0')}</span>
+                        <span class="bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-normal">📍 ${ev.area}</span>
+                    </div>
+                    <div class="font-medium truncate mt-1 text-white">${ev.title}</div>
+                    <div class="text-[11px] text-white/90 mt-0.5 font-bold">保母：${ev.nannyName}</div>
+                `;
+
+                card.onclick = () => showDetail(ev);
+                container.appendChild(card);
+            });
+        }
+
+        function showDetail(ev) {
+            document.getElementById('placeholderCard').classList.add('hidden');
+            const detailCard = document.getElementById('detailCard');
+            detailCard.classList.remove('hidden');
+
+            document.getElementById('detailTitle').innerText = ev.title;
+            document.getElementById('detailArea').innerText = `📍 服務區域：${ev.area} ｜ 窩貓裏派單系統`;
+            document.getElementById('detailTime').innerText = `⏱️ ${String(ev.startHour).padStart(2, '0')}:${String(ev.startMin).padStart(2, '0')} ─ ${String(ev.endHour).padStart(2, '0')}:${String(ev.endMin).padStart(2, '0')}`;
+            
+            const nannyTag = document.getElementById('detailNanny');
+            nannyTag.innerText = `負責保母：${ev.nannyName}`;
+            nannyTag.className = `text-xs font-bold px-2.5 py-1 rounded-full text-white ${ev.colorClass}`;
+
+            const notesUl = document.getElementById('detailNotes');
+            notesUl.innerHTML = '';
+            ev.notes.forEach(note => {
+                const li = document.createElement('li');
+                li.innerHTML = note.replace(/「(.*?)」/g, `<strong class="text-rose-600 font-bold bg-rose-50 px-1 rounded">「$1」</strong>`);
+                notesUl.appendChild(li);
+            });
+        }
+
+        function filterNanny(nannyKey) {
+            currentFilter = nannyKey;
+            
+            const buttons = document.querySelectorAll('#nannyFilters button');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(`'${nannyKey}'`)) {
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'scale(1.05)';
+                    btn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                } else {
+                    btn.style.opacity = '0.4';
+                    btn.style.transform = 'scale(1)';
+                    btn.style.boxShadow = 'none';
+                }
+            });
+
+            initTimeline();
+        }
+
+        document.getElementById('datePicker').addEventListener('change', () => {
+            document.getElementById('placeholderCard').classList.remove('hidden');
+            document.getElementById('detailCard').classList.add('hidden');
+            initTimeline();
+        });
+
+        window.onload = () => {
+            filterNanny('all');
+        };
+    </script>
+</body>
+</html>
