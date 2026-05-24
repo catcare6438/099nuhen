@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>貓窩裏 · 保母行事曆</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--surface:#fff;--border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.22);
+  --text:#1a1a18;--text2:#5f5e5a;--text3:#999;
+  --green:#1D9E75;--green-bg:#E1F5EE;--green-dk:#085041;
+  --r8:8px;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--surface:#252523;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.25);
+  --text:#f0efea;--text2:#b4b2a9;--text3:#666;--green-bg:#04342C;--green-dk:#9FE1CB}
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--text);padding:12px;min-height:100vh}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.hdr h1{font-size:17px;font-weight:700}
+.hdr p{font-size:11px;color:var(--text2);margin-top:2px}
+.btn-add{background:var(--green);color:#fff;border:none;border-radius:var(--r8);padding:10px 15px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;-webkit-appearance:none}
+
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nav-mid{font-size:16px;font-weight:700}
+.btn-nav{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r8);padding:8px 16px;font-size:18px;cursor:pointer;color:var(--text);-webkit-appearance:none}
+.btn-today{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r8);padding:8px 12px;font-size:13px;cursor:pointer;color:var(--text);-webkit-appearance:none}
+
+.wk-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
+.wk-cell{text-align:center;font-size:12px;color:var(--text3);padding:4px 0;font-weight:600}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+
+.day{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 4px;min-height:80px;cursor:pointer;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
+.day:active{opacity:.65}
+.day.other{background:var(--bg);opacity:.35;cursor:default;pointer-events:none}
+.day.today{border:2px solid var(--green)}
+.day.today .dn{background:var(--green);color:#fff;border-radius:50%}
+.dn{font-size:12px;font-weight:700;width:22px;height:22px;display:flex;align-items:center;justify-content:center;margin-bottom:3px}
+.dot-wrap{display:flex;flex-direction:column;gap:2px}
+.dot{font-size:10px;font-weight:600;padding:2px 4px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.45;background:#9FE1CB;color:#085041}
+.dot.walk{background:#B5D4F4;color:#0C447C}
+.dot.visit{background:#FAC775;color:#633806}
+.dot.bath{background:#F4C0D1;color:#72243E}
+.dot.oth{background:#D3D1C7;color:#444}
+.dot-more{font-size:10px;color:var(--text3);padding:1px 3px;font-weight:600}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+@media(min-width:520px){.overlay{align-items:center}}
+.sheet{background:var(--surface);border-radius:18px 18px 0 0;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:8px 16px 40px;-webkit-overflow-scrolling:touch}
+@media(min-width:520px){.sheet{border-radius:12px;width:480px;padding:16px 20px 24px}}
+.handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:8px auto 16px}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mtitle{font-size:17px;font-weight:700}
+.btn-x{background:none;border:none;font-size:26px;cursor:pointer;color:var(--text2);padding:0 4px;line-height:1;-webkit-appearance:none}
+
+.arow{border:1px solid var(--border);border-radius:var(--r8);padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.ainfo{flex:1;min-width:0}
+.atime{font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:600}
+.aname-btn{background:none;border:none;cursor:pointer;font-size:15px;font-weight:700;color:#185FA5;padding:0;text-align:left;font-family:inherit;text-decoration:underline;text-underline-offset:2px;-webkit-appearance:none}
+.tpill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700;margin-left:6px;vertical-align:middle}
+.tp-cat{background:#9FE1CB;color:#085041}.tp-dog{background:#B5D4F4;color:#0C447C}
+.tp-vis{background:#FAC775;color:#633806}.tp-bath{background:#F4C0D1;color:#72243E}.tp-etc{background:#D3D1C7;color:#444}
+.apet{font-size:12px;color:var(--text2);margin-top:3px}
+.acol{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.btn-sm{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--text);font-family:inherit;-webkit-appearance:none}
+.btn-sm-del{background:none;border:1px solid #f0c0c0;border-radius:6px;padding:7px 12px;font-size:13px;cursor:pointer;color:#A32D2D;font-family:inherit;-webkit-appearance:none}
+
+.cbadge{display:inline-flex;align-items:center;gap:5px;font-size:13px;background:var(--green-bg);color:var(--green-dk);border-radius:var(--r8);padding:5px 11px;margin-bottom:10px;font-weight:600}
+.alert-box{border-left:3px solid #EF9F27;background:#FAEEDA;color:#633806;border-radius:0 var(--r8) var(--r8) 0;padding:10px 13px;font-size:14px;line-height:1.7;margin-bottom:10px}
+.note-box{background:var(--bg);border-radius:var(--r8);padding:10px 13px;font-size:14px;color:var(--text2);line-height:1.7}
+.slabel{font-size:12px;font-weight:700;color:var(--text3);margin-bottom:5px;margin-top:10px}
+.addr-row{font-size:13px;color:var(--text2);margin-bottom:10px}
+
+/* Form */
+.fg{margin-bottom:14px}
+.fl{font-size:13px;color:var(--text2);margin-bottom:6px;display:block;font-weight:600}
+.fi{
+  width:100%;border:1.5px solid var(--border2);border-radius:var(--r8);
+  padding:12px;font-size:16px;/* iOS 不縮放的最小字級 */
+  color:var(--text);background:var(--surface);font-family:inherit;
+  -webkit-appearance:none;appearance:none;
+}
+.fi:focus{outline:none;border-color:var(--green);border-width:2px}
+select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+textarea.fi{resize:vertical;min-height:76px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.btn-save{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r8);padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;-webkit-appearance:none}
+.btn-add-inline{display:flex;align-items:center;justify-content:center;width:100%;background:var(--green-bg);color:var(--green-dk);border:1.5px dashed var(--green);border-radius:var(--r8);padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;-webkit-appearance:none}
+.empty{text-align:center;color:var(--text3);font-size:14px;padding:28px 0;line-height:2}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <h1>&#128062; 貓窩裏保母行事曆</h1>
+    <p>到府寵物服務管理</p>
+  </div>
+  <button class="btn-add" onclick="openAdd()">＋ 新增</button>
+</div>
+
+<div class="nav">
+  <div style="display:flex;gap:5px">
+    <button class="btn-nav" onclick="changeMonth(-1)">&#8249;</button>
+    <button class="btn-nav" onclick="changeMonth(1)">&#8250;</button>
+  </div>
+  <div class="nav-mid" id="mlabel"></div>
+  <button class="btn-today" onclick="goToday()">今天</button>
+</div>
+
+<div class="wk-row">
+  <div class="wk-cell" style="color:#d03030">日</div>
+  <div class="wk-cell">一</div><div class="wk-cell">二</div><div class="wk-cell">三</div><div class="wk-cell">四</div><div class="wk-cell">五</div>
+  <div class="wk-cell" style="color:#3a80d2">六</div>
+</div>
+<div class="cal" id="cal"></div>
+
+<!-- Day Sheet -->
+<div class="overlay" id="dayOv">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mhdr">
+      <span class="mtitle" id="dayTitle"></span>
+      <button class="btn-x" onclick="closeOv('dayOv')">&#215;</button>
+    </div>
+    <div id="dayList"></div>
+    <button class="btn-add-inline" onclick="closeOv('dayOv');openAdd()">＋ 新增行程</button>
+  </div>
+</div>
+
+<!-- Client Sheet -->
+<div class="overlay" id="clientOv">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mhdr">
+      <span class="mtitle" id="clientTitle"></span>
+      <button class="btn-x" onclick="closeOv('clientOv')">&#215;</button>
+    </div>
+    <div id="clientBody"></div>
+  </div>
+</div>
+
+<!-- Form Sheet -->
+<div class="overlay" id="formOv">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mhdr">
+      <span class="mtitle" id="formTitle">新增行程</span>
+      <button class="btn-x" onclick="closeOv('formOv')">&#215;</button>
+    </div>
+    <div class="fg">
+      <label class="fl">日期</label>
+      <!-- 用 text + pattern 取代 date，避免 iOS Safari 的 value 設定問題 -->
+      <input type="date" class="fi" id="fDate" placeholder="YYYY-MM-DD">
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">時間</label>
+        <input type="time" class="fi" id="fTime">
+      </div>
+      <div class="fg"><label class="fl">服務類型</label>
+        <select class="fi" id="fType">
+          <option value="顧貓">顧貓</option>
+          <option value="遛狗">遛狗</option>
+          <option value="家訪">家訪</option>
+          <option value="洗澡">洗澡</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">客戶姓名</label>
+      <input type="text" class="fi" id="fName" placeholder="例：王小姐" autocomplete="off">
+    </div>
+    <div class="fg"><label class="fl">服務地址</label>
+      <input type="text" class="fi" id="fAddr" placeholder="高雄市○○區…" autocomplete="off">
+    </div>
+    <div class="fg"><label class="fl">寵物名稱／種類</label>
+      <input type="text" class="fi" id="fPet" placeholder="例：橘子（橘貓）" autocomplete="off">
+    </div>
+    <div class="fg"><label class="fl">&#9888; 須注意事項</label>
+      <textarea class="fi" id="fAlert" placeholder="例：需每天吃藥、怕陌生人…"></textarea>
+    </div>
+    <div class="fg"><label class="fl">備註</label>
+      <textarea class="fi" id="fNote" placeholder="其他補充…"></textarea>
+    </div>
+    <button class="btn-save" onclick="saveAppt()">&#10003; 儲存行程</button>
+  </div>
+</div>
+
+<script>
+// ── 資料持久化（localStorage）──────────────────────────────
+var STORE_KEY = 'petsitter_appts';
+var STORE_NID  = 'petsitter_nid';
+
+var DEFAULT_APPTS = [
+  {id:1,date:'2026-05-23',time:'09:00',type:'家訪',name:'王小姐',addr:'高雄市鼓山區某路1號',pet:'小白（波斯貓）',alert:'怕噪音，進門請輕聲',note:'鑰匙在信箱'},
+  {id:2,date:'2026-05-23',time:'11:00',type:'顧貓',name:'李先生',addr:'高雄市左營區某街22號',pet:'咖啡（美國短毛貓）',alert:'需每天吃腎臟病藥一顆',note:'飼料在廚房上方'},
+  {id:3,date:'2026-05-23',time:'14:00',type:'遛狗',name:'黃小姐',addr:'高雄市三民區某路8號',pet:'花生（柴犬）',alert:'見到其他狗會衝，請抓緊牽繩',note:'散步約30分鐘'},
+  {id:4,date:'2026-05-26',time:'10:00',type:'顧貓',name:'陳太太',addr:'高雄市新興區某路5號',pet:'豆腐（布偶貓）',alert:'剛結紮，傷口需觀察',note:''},
+  {id:5,date:'2026-05-28',time:'09:30',type:'洗澡',name:'林小姐',addr:'高雄市苓雅區某路3號',pet:'芒果（金毛獵犬）',alert:'怕吹風機聲音',note:'只用指定沐浴乳'}
+];
+
+function loadAppts() {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return DEFAULT_APPTS;
+}
+function saveStore() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(appts)); } catch(e) {}
+  try { localStorage.setItem(STORE_NID, String(nid)); } catch(e) {}
+}
+
+var appts = loadAppts();
+var nid = parseInt(localStorage.getItem(STORE_NID) || '6', 10);
+var TODAY = new Date();
+var cY = TODAY.getFullYear();
+var cM = TODAY.getMonth() + 1;
+var editId = null;
+var currentDateS = ''; // 目前開著的 daySheet 的日期
+
+var MN = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+
+// ── 工具函式 ──────────────────────────────────────────────
+function pad2(n){ return n < 10 ? '0' + n : String(n); }
+
+// 取得今天的 YYYY-MM-DD（不依賴任何 timezone 問題）
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+}
+
+function typeClass(t) {
+  return t==='遛狗'?'walk': t==='家訪'?'visit': t==='洗澡'?'bath': t==='其他'?'oth': '';
+}
+function pillClass(t) {
+  return t==='顧貓'?'cat': t==='遛狗'?'dog': t==='家訪'?'vis': t==='洗澡'?'bath': 'etc';
+}
+
+// ── 日曆渲染 ──────────────────────────────────────────────
+function render() {
+  document.getElementById('mlabel').textContent = cY + '年 ' + MN[cM-1];
+  var grid = document.getElementById('cal');
+  grid.innerHTML = '';
+
+  var first = new Date(cY, cM-1, 1).getDay();
+  var days  = new Date(cY, cM,   0).getDate();
+  var prev  = new Date(cY, cM-1, 0).getDate();
+  var cells = [];
+  var i, d;
+  for (i = 0; i < first; i++) cells.push({d: prev - first + 1 + i, cur: false});
+  for (d = 1; d <= days; d++) cells.push({d: d, cur: true});
+  var rem = (7 - cells.length % 7) % 7;
+  for (i = 1; i <= rem; i++) cells.push({d: i, cur: false});
+
+  var tY = TODAY.getFullYear(), tM = TODAY.getMonth()+1, tD = TODAY.getDate();
+
+  for (i = 0; i < cells.length; i++) {
+    (function(c) {
+      var dateS = c.cur ? (cY + '-' + pad2(cM) + '-' + pad2(c.d)) : '';
+      var da = [];
+      if (c.cur) {
+        for (var k = 0; k < appts.length; k++) {
+          if (appts[k].date === dateS) da.push(appts[k]);
+        }
+        da.sort(function(a,b){ return a.time < b.time ? -1 : 1; });
+      }
+      var isT = c.cur && cY===tY && cM===tM && c.d===tD;
+
+      var el = document.createElement('div');
+      el.className = 'day' + (c.cur ? '' : ' other') + (isT ? ' today' : '');
+      if (c.cur) {
+        el.setAttribute('data-date', dateS);
+        el.setAttribute('data-day', String(c.d));
+        el.onclick = function() { openDay(this.getAttribute('data-date'), parseInt(this.getAttribute('data-day'))); };
+      }
+
+      var dn = document.createElement('div');
+      dn.className = 'dn';
+      dn.textContent = String(c.d);
+      el.appendChild(dn);
+
+      if (da.length > 0) {
+        var dw = document.createElement('div');
+        dw.className = 'dot-wrap';
+        var show = da.length > 3 ? da.slice(0,3) : da;
+        for (var j = 0; j < show.length; j++) {
+          var dot = document.createElement('div');
+          dot.className = 'dot ' + typeClass(show[j].type);
+          dot.textContent = show[j].time + ' ' + show[j].name;
+          dw.appendChild(dot);
+        }
+        if (da.length > 3) {
+          var more = document.createElement('div');
+          more.className = 'dot-more';
+          more.textContent = '+' + (da.length - 3) + ' 筆';
+          dw.appendChild(more);
+        }
+        el.appendChild(dw);
+      }
+      grid.appendChild(el);
+    })(cells[i]);
+  }
+}
+
+function changeMonth(d) {
+  cM += d;
+  if (cM > 12) { cM = 1; cY++; }
+  if (cM < 1)  { cM = 12; cY--; }
+  render();
+}
+function goToday() {
+  cY = TODAY.getFullYear();
+  cM = TODAY.getMonth() + 1;
+  render();
+}
+
+// ── Day Sheet ──────────────────────────────────────────────
+function openDay(dateS, d) {
+  currentDateS = dateS;
+  document.getElementById('dayTitle').textContent = cY + '年' + MN[cM-1] + d + '日';
+  refreshDayList();
+  openOv('dayOv');
+}
+
+function refreshDayList() {
+  var list = document.getElementById('dayList');
+  var da = [];
+  for (var k = 0; k < appts.length; k++) {
+    if (appts[k].date === currentDateS) da.push(appts[k]);
+  }
+  da.sort(function(a,b){ return a.time < b.time ? -1 : 1; });
+
+  if (!da.length) {
+    list.innerHTML = '<div class="empty">今天尚無行程<br><span style="font-size:32px">&#128062;</span></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < da.length; i++) {
+    var a = da[i];
+    html += '<div class="arow">' +
+      '<div class="ainfo">' +
+        '<div class="atime">&#9202; ' + a.time + '</div>' +
+        '<div style="margin-bottom:2px">' +
+          '<button class="aname-btn" onclick="openClient(' + a.id + ')">' + esc(a.name) + '</button>' +
+          '<span class="tpill tp-' + pillClass(a.type) + '">' + a.type + '</span>' +
+        '</div>' +
+        (a.pet ? '<div class="apet">&#128062; ' + esc(a.pet) + '</div>' : '') +
+      '</div>' +
+      '<div class="acol">' +
+        '<button class="btn-sm" onclick="openEditFromDay(' + a.id + ')">&#9998; 編輯</button>' +
+        '<button class="btn-sm-del" onclick="delAppt(' + a.id + ')">&#128465; 刪除</button>' +
+      '</div>' +
+    '</div>';
+  }
+  list.innerHTML = html;
+}
+
+// ── Client Sheet ───────────────────────────────────────────
+function openClient(id) {
+  var a = findById(id); if (!a) return;
+  document.getElementById('clientTitle').textContent = a.name + ' · 客戶資料';
+  document.getElementById('clientBody').innerHTML =
+    '<div class="cbadge">&#128062; ' + esc(a.pet || '未填寫') + '</div>' +
+    (a.addr ? '<div class="addr-row">&#128205; ' + esc(a.addr) + '</div>' : '') +
+    (a.alert ? '<div class="slabel">&#9888; 須注意事項</div><div class="alert-box">' + esc(a.alert) + '</div>' : '') +
+    (a.note  ? '<div class="slabel">&#128221; 備註</div><div class="note-box">' + esc(a.note) + '</div>' : '') +
+    (!a.alert && !a.note ? '<div class="empty">尚無備註資料</div>' : '') +
+    '<button class="btn-sm" style="width:100%;margin-top:14px;padding:12px;font-size:14px" onclick="openEditFromClient(' + id + ')">&#9998; 編輯此行程</button>';
+  openOv('clientOv');
+}
+
+// ── Form ───────────────────────────────────────────────────
+function openAdd() {
+  editId = null;
+  document.getElementById('formTitle').textContent = '新增行程';
+
+  // ★ iOS 安全寫法：直接設定字串，不透過 Date 物件轉換
+  document.getElementById('fDate').value = todayStr();
+  document.getElementById('fTime').value = '09:00';
+  document.getElementById('fType').value = '顧貓';
+  setField('fName', ''); setField('fAddr', '');
+  setField('fPet',  ''); setField('fAlert', ''); setField('fNote', '');
+  openOv('formOv');
+}
+
+function openEdit(id) {
+  var a = findById(id); if (!a) return;
+  editId = id;
+  document.getElementById('formTitle').textContent = '編輯行程';
+  document.getElementById('fDate').value  = a.date;   // 已是 YYYY-MM-DD，iOS 可直接讀
+  document.getElementById('fTime').value  = a.time;
+  document.getElementById('fType').value  = a.type;
+  setField('fName',  a.name);  setField('fAddr',  a.addr  || '');
+  setField('fPet',   a.pet   || ''); setField('fAlert', a.alert || ''); setField('fNote', a.note || '');
+  openOv('formOv');
+}
+
+function openEditFromDay(id) {
+  closeOv('dayOv');
+  openEdit(id);
+}
+function openEditFromClient(id) {
+  closeOv('clientOv');
+  openEdit(id);
+}
+
+function saveAppt() {
+  var date = document.getElementById('fDate').value.trim();
+  var time = document.getElementById('fTime').value.trim();
+  var name = document.getElementById('fName').value.trim();
+
+  // 驗證日期格式 YYYY-MM-DD
+  if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    alert('日期格式不正確，請用 YYYY-MM-DD 格式（例：2026-06-01）'); return;
+  }
+  if (!time) { alert('請填寫時間'); return; }
+  if (!name) { alert('請填寫客戶姓名'); return; }
+
+  var appt = {
+    id:    editId !== null ? editId : nid++,
+    date:  date,
+    time:  time,
+    type:  document.getElementById('fType').value,
+    name:  name,
+    addr:  document.getElementById('fAddr').value.trim(),
+    pet:   document.getElementById('fPet').value.trim(),
+    alert: document.getElementById('fAlert').value.trim(),
+    note:  document.getElementById('fNote').value.trim()
+  };
+
+  if (editId !== null) {
+    var idx = -1;
+    for (var i = 0; i < appts.length; i++) { if (appts[i].id === editId) { idx = i; break; } }
+    if (idx > -1) appts[idx] = appt;
+  } else {
+    appts.push(appt);
+  }
+
+  saveStore(); // ★ 寫入 localStorage，重整不消失
+  closeOv('formOv');
+
+  // 跳到行程所在的月份
+  var parts = date.split('-');
+  cY = parseInt(parts[0], 10);
+  cM = parseInt(parts[1], 10);
+  render();
+
+  // 若 daySheet 還開著，更新列表
+  if (document.getElementById('dayOv').classList.contains('open')) {
+    currentDateS = date;
+    refreshDayList();
+  }
+}
+
+function delAppt(id) {
+  if (!confirm('確定要刪除這個行程？')) return;
+  var next = [];
+  for (var i = 0; i < appts.length; i++) { if (appts[i].id !== id) next.push(appts[i]); }
+  appts = next;
+  saveStore();
+  refreshDayList();
+  render();
+}
+
+// ── 工具 ───────────────────────────────────────────────────
+function findById(id) {
+  for (var i = 0; i < appts.length; i++) { if (appts[i].id === id) return appts[i]; }
+  return null;
+}
+function setField(id, val) { document.getElementById(id).value = val; }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function openOv(id)  { document.getElementById(id).classList.add('open'); }
+function closeOv(id) { document.getElementById(id).classList.remove('open'); }
+
+var ovs = document.querySelectorAll('.overlay');
+for (var _i = 0; _i < ovs.length; _i++) {
+  ovs[_i].addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+}
+
+render();
+</script>
+</body>
+</html>
